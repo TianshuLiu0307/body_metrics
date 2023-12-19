@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create User</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Create New User</h2>
+
+        <form action="/users/" method="post">
+            <div class="form-group">
+                 <label for="user_id">User ID:</label>
+                 <input type="text" class="form-control" id="user_id" name="user_id" value="{{ next_id }}" readonly>
+            </div>
+            <!-- User Name -->
+            <div class="form-group">
+                <label for="user_name">User Name:</label>
+                <input type="text" class="form-control" id="user_name" name="user_name" required>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="form-group">
+                <label for="dob">Date of Birth:</label>
+                <input type="date" class="form-control" id="dob" name="dob">
+            </div>
+
+            <!-- Gender -->
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select class="form-control" id="gender" name="gender">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <!-- Race -->
+            <div class="form-group">
+                <label for="race">Race:</label>
+                <input type="text" class="form-control" id="race" name="race">
+            </div>
+
+            <!-- Phone Number -->
+            <div class="form-group">
+                <label for="phone_number">Phone Number:</label>
+                <input type="tel" class="form-control" id="phone_number" name="phone_number">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

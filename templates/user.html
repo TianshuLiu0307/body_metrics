@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>User Profile</h2>
+
+        <table class="table">
+            <tr>
+                <th>User ID:</th>
+                <td>{{ user.user_id }}</td>
+            </tr>
+            <tr>
+                <th>User Name:</th>
+                <td>{{ user.user_name }}</td>
+            </tr>
+            <tr>
+                <th>Date of Birth:</th>
+                <td>{{ user.dob }}</td>
+            </tr>
+            <tr>
+                <th>Gender:</th>
+                <td>{{ user.gender }}</td>
+            </tr>
+            <tr>
+                <th>Race:</th>
+                <td>{{ user.race }}</td>
+            </tr>
+            <tr>
+                <th>Email:</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Phone Number:</th>
+                <td>{{ user.phone_number }}</td>
+            </tr>
+        </table>
+
+
+        <form method="POST" action="/users/{{ user.user_id }}/add_metric/">
+    <div class="form-group">
+        <label for="metric_index">Metric Name:</label>
+        <select class="form-control" id="metricSelect" name="metric_index">
+            <option type = "number" step = "1" value="1">weight</option>
+            <option type = "number" step = "1" value="2">height</option>
+
+            <!-- Add more options as needed -->
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="value">Value:</label>
+        <input type="number" step="0.01" class="form-control" id="value" name="value" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+        <h3>Body Metrics History</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Metric Name</th>
+                    <th>Time</th>
+                    <th>Value</th>
+                    <th>Metric Unit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in body_metrics %}
+                <tr>
+                    <td>{{ record.metric_name }}</td>
+                    <td>{{ record.timestamp }}</td>
+                    <td>{{ record.value }}</td>
+                    <td>{{ record.metric_unit }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
