@@ -190,8 +190,6 @@ def read_user(user_id: int, request: Request, db: Session = Depends(get_db)):
         .all()
     )
 
-    print(distinct_metric_names)
-
     # if not body_metrics_records:
     #     raise HTTPException(status_code=404, detail="No body metrics records found for this user")
 
@@ -206,7 +204,7 @@ def read_user(user_id: int, request: Request, db: Session = Depends(get_db)):
         })
 
     return templates.TemplateResponse("user.html", {"request": request, "user": user, "body_metrics": result})
-    # return result
+
 
 if __name__ == "__main__":
     import uvicorn

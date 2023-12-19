@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>User Profile</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-4">
@@ -40,27 +41,27 @@
             </tr>
         </table>
 
-
+        <h3>Add New Metric</h3>
         <form method="POST" action="/users/{{ user.user_id }}/add_metric/">
-    <div class="form-group">
-        <label for="metric_index">Metric Name:</label>
-        <select class="form-control" id="metricSelect" name="metric_index">
-            <option type = "number" step = "1" value="1">weight</option>
-            <option type = "number" step = "1" value="2">height</option>
-            <option type = "number" step = "1" value="3">body fat</option>
-            <option type = "number" step = "1" value="4">heart rate</option>
-            <!-- Add more options as needed -->
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="value">Value:</label>
-        <input type="number" step="0.01" class="form-control" id="value" name="value" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+            <div class="form-group">
+                <label for="metric_index">Metric Name:</label>
+                <select class="form-control" id="metricSelect" name="metric_index">
+                    <option type="number" step="1" value="1">weight</option>
+                    <option type="number" step="1" value="2">height</option>
+                    <option type="number" step="1" value="3">body fat</option>
+                    <option type="number" step="1" value="4">heart rate</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="value">Value:</label>
+                <input type="number" step="0.01" class="form-control" id="value" name="value" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
 
         <h3>Body Metrics History</h3>
-        <table class="table">
+        <table class="table" id="bodyMetricsTable">
             <thead>
                 <tr>
                     <th>Metric Name</th>
@@ -82,6 +83,16 @@
         </table>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#bodyMetricsTable').DataTable({
+                "paging": false, // Enable pagination
+                "ordering": true, // Enable sorting
+                "searching": false, // Enable searching
+            });
+        });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
