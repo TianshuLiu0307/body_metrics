@@ -9,7 +9,7 @@ from typing import Optional
 from datetime import date, datetime
 
 # Database configuration
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://admin:shapementor@shapementor-user-rds.cuorsbapmndf.us-east-2.rds.amazonaws.com/ShapeMentor"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://admin:shapementor@shapementor-rds.cuorsbapmndf.us-east-2.rds.amazonaws.com/ShapeMentor"
 
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
