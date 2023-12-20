@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends, Form, HTTPException
+from fastapi import FastAPI, Request, Depends, Form, HTTPException, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy import create_engine, Column, Integer, String, Date, Boolean, func, DateTime, ForeignKey, Float
@@ -95,6 +95,19 @@ class BodyMetricsCreateModel(BaseModel):
 # FastAPI app
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
+
+@app.middleware("http")
+async def db_session_middleware(request: Request, call_next):
+    response = Response("Internal server error", status_code=500)
+    try:
+        request.state.db = SessionLocal()
+        print("request middleware!")
+        response = await call_next(request)
+    finally:
+        request.state.db.close()
+        print("close middleware!")
+    return response
 
 # Dependency to get the database session
 def get_db():
