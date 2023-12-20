@@ -93,6 +93,10 @@ def get_db():
     finally:
         db.close()
 
+@app.get("/")
+def hello():
+    return "hello"
+
 @app.get("/users/create")
 def create_user_form(request: Request, db: Session = Depends(get_db)):
     max_id = db.query(func.max(User.user_id)).scalar()
