@@ -43,6 +43,17 @@ class UserCreateModel(BaseModel):
     class Config:
         orm_mode = True
 
+class UserUpdateModel(BaseModel):
+    user_id: int
+    user_name: str
+    dob: Optional[date]
+    gender: Optional[str]
+    race: Optional[str]
+    email: str
+    phone_number: Optional[str]
+    class Config:
+        orm_mode = True
+
 class UserResponseModel(BaseModel):
     user_id: int
     user_name: str
@@ -114,7 +125,7 @@ def create_user(user_id: str = Form(...),
                 race: str = Form(None),
                 phone_number : str = Form(None),
                 db: Session = Depends(get_db)):
-
+    print("iam here")
     new_user = User(
         user_id = user_id,
         user_name=user_name,
@@ -131,6 +142,47 @@ def create_user(user_id: str = Form(...),
     db.refresh(new_user)
 
     return RedirectResponse(url=f"/users/{new_user.user_id}", status_code=303)
+@app.post("/users/{user_id}/edit")
+def get_update_user(user_id:int,
+    new_user_name: str = Form(...),
+    new_email: EmailStr = Form(...),
+    new_dob: date = Form(None),
+    new_gender: str = Form(None),
+    new_race: str = Form(None),
+    new_phone_number: str = Form(None),
+    db: Session = Depends(get_db)):
+
+    print(new_user_name, new_email, new_dob, new_gender, new_race, new_phone_number)
+
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    new_user = UserUpdateModel(
+        user_id= user_id,
+        user_name= new_user_name,
+        email= new_email,
+        dob = new_dob,
+        gender = new_gender,
+        race = new_race,
+        phone_number = new_phone_number
+    )
+
+    update_user(user_id, new_user, db)
+    return RedirectResponse(url=f"/users/{user_id}", status_code=303)
+#
+#
+@app.put("/users/{user_id}/editing", response_model=UserUpdateModel)
+def update_user(user_id: int, user_data: UserUpdateModel, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    for key, value in user_data.dict(exclude_unset=True).items():
+        setattr(user, key, value)
+    db.commit()
+    db.refresh(user)
+    print("updated!")
+    return user
 
 @app.post("/users/{user_id}/add_metric/", response_model=BodyMetricsCreateModel)
 def add_body_metric(user_id: int,
@@ -214,4 +266,4 @@ def read_user(user_id: int, request: Request, db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8012)
+    uvicorn.run(app, host="localhost", port=8012)

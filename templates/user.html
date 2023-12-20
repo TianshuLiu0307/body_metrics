@@ -41,6 +41,57 @@
             </tr>
         </table>
 
+        <!-- Edit Profile Button -->
+        <button id="editButton" class="btn btn-primary">Edit Profile</button>
+
+        <!-- Editable Profile Form -->
+
+        <form action="/users/{{ user.user_id }}/edit" method="POST"  style="display: none;" id="editForm">
+<!--            <div class="form-group">-->
+<!--        <label for="userID">User ID: </label>-->
+<!--        <input type="text" class="form-control" id="new_user_id" name="new_user_id" value="{{ user.user_id }}" oninput="enableConfirmButton()">-->
+<!--    </div>-->
+            <!-- User Name Field -->
+    <div class="form-group">
+        <label for="new_user_name">User Name:</label>
+        <input type="text" class="form-control" id="new_user_name" name="new_user_name" value="{{ user.user_name }}" oninput="enableConfirmButton()">
+    </div>
+            <div class="form-group">
+        <label for="new_email">Email:</label>
+        <input type="text" class="form-control" id="new_email" name="new_email" value="{{ user.email }}" oninput="enableConfirmButton()">
+    </div>
+    <!-- Date of Birth Field -->
+        <div class="form-group">
+            <label for="new_dob">Date of Birth:</label>
+            <input type="date" class="form-control" id="new_dob" name="new_dob" value="{{ user.dob }}" oninput="enableConfirmButton()">
+        </div>
+
+
+<!--    &lt;!&ndash; Gender Field &ndash;&gt;-->
+        <div class="form-group">
+            <label for="new_gender">Gender:</label>
+            <input type="text" class="form-control" id="new_gender" name="new_gender" value="{{ user.gender }}" oninput="enableConfirmButton()">
+        </div>
+
+<!--    &lt;!&ndash; Race Field &ndash;&gt;-->
+        <div class="form-group">
+            <label for="new_race">Race:</label>
+            <input type="text" class="form-control" id="new_race" name="new_race" value="{{ user.race }}" oninput="enableConfirmButton()">
+        </div>
+
+
+
+    <!-- Phone Number Field -->
+    <div class="form-group">
+        <label for="new_phone_number">Phone Number:</label>
+        <input type="text" class="form-control" id="new_phone_number" name="new_phone_number" value="{{ user.phone_number }}" oninput="enableConfirmButton()">
+    </div>
+
+    <!-- Confirm Button -->
+    <button type="submit" class="btn btn-success" id="confirmButton" disabled>Confirm</button>
+</form>
+
+
         <h3>Add New Metric</h3>
         <form method="POST" action="/users/{{ user.user_id }}/add_metric/">
             <div class="form-group">
@@ -90,6 +141,30 @@
                 "paging": false, // Enable pagination
                 "ordering": true, // Enable sorting
                 "searching": false, // Enable searching
+            });
+
+            // Handle the "Edit Profile" button click
+            const editButton = document.getElementById("editButton");
+            const editForm = document.getElementById("editForm");
+            const confirmButton = document.getElementById("confirmButton");
+
+            // Handle the "Edit Profile" button click
+            editButton.addEventListener("click", () => {
+                editForm.style.display = "block";
+                confirmButton.disabled = true; // Disable the Confirm button initially
+            });
+
+            // Handle form field changes
+            const formFields = editForm.querySelectorAll("input");
+            formFields.forEach((field) => {
+                field.addEventListener("input", () => {
+                    confirmButton.disabled = false; // Enable the Confirm button when there's a change
+                });
+            });
+
+            // Handle the "Confirm" button click
+            confirmButton.addEventListener("click", () => {
+                editForm.submit(); // Submit the form when Confirm is clicked
             });
         });
     </script>
