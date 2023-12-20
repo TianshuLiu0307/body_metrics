@@ -226,6 +226,36 @@ def get_body_metrics_for_user(user_id: int, db: Session = Depends(get_db)):
 
     return result
 
+@app.post("/users/{user_id}/delete")
+def get_delete_metric(user_id: int,
+                      delete_timestamp: str = Form(...),
+                      delete_metric_index: str = Form(...),
+                      db: Session = Depends(get_db)):
+    print(user_id, delete_timestamp, delete_metric_index)
+    delete_body_metric(user_id, delete_timestamp, delete_metric_index, db)
+    return RedirectResponse(url=f"/users/{user_id}", status_code=303)
+
+@app.delete("/users/{user_id}/metrics/{timestamp}/{metric_index}")
+def delete_body_metric(user_id: int, timestamp: str, metric_index: str, db: Session = Depends(get_db)):
+
+    timestamp = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+
+    metric_record = db.query(BodyMetrics).filter(
+        BodyMetrics.user_id == user_id,
+        BodyMetrics.timestamp == timestamp,
+        BodyMetrics.metric_index == metric_index
+    ).first()
+
+    # If the record does not exist, return a not found response
+    if not metric_record:
+        raise HTTPException(status_code=404, detail="Body metric record not found")
+
+    db.delete(metric_record)
+    db.commit()
+
+    return {"detail": "Body metric record deleted successfully"}
+
+
 @app.get("/users/{user_id}")
 def read_user(user_id: int, request: Request, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.user_id == user_id).first()

@@ -119,6 +119,7 @@
                     <th>Time</th>
                     <th>Value</th>
                     <th>Metric Unit</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -128,6 +129,13 @@
                     <td>{{ record.timestamp }}</td>
                     <td>{{ record.value }}</td>
                     <td>{{ record.metric_unit }}</td>
+                    <td>
+                        <form action="/users/{{ user.user_id }}/delete" method="POST">
+                            <input type="hidden" id="delete_timestamp" name="delete_timestamp" value="{{ record.timestamp }}">
+                            <input type="hidden" id="delete_metric_index" name="delete_metric_index" value="{{ record.metric_index }}">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -141,6 +149,7 @@
                 "paging": false, // Enable pagination
                 "ordering": true, // Enable sorting
                 "searching": false, // Enable searching
+                "order": [[1, 'desc']] // Sort by the second column (time) in descending orde
             });
 
             // Handle the "Edit Profile" button click
