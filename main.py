@@ -125,7 +125,6 @@ def create_user(user_id: str = Form(...),
                 race: str = Form(None),
                 phone_number : str = Form(None),
                 db: Session = Depends(get_db)):
-    print("iam here")
     new_user = User(
         user_id = user_id,
         user_name=user_name,
@@ -184,7 +183,7 @@ def update_user(user_id: int, user_data: UserUpdateModel, db: Session = Depends(
     print("updated!")
     return user
 
-@app.post("/users/{user_id}/add_metric/", response_model=BodyMetricsCreateModel)
+@app.post("/users/{user_id}/add_metric/")
 def add_body_metric(user_id: int,
                     metric_index: int = Form(...),
                     value: float = Form(...),
