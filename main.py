@@ -7,6 +7,7 @@ from sqlalchemy.orm import sessionmaker, Session, relationship, joinedload
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import date, datetime
+import uvicorn
 
 # Database configuration
 SQLALCHEMY_DATABASE_URL = "mysql+pymysql://admin:shapementor@shapementor-rds.cuorsbapmndf.us-east-2.rds.amazonaws.com/ShapeMentor"
@@ -307,5 +308,5 @@ def read_user(user_id: int, request: Request, db: Session = Depends(get_db)):
 
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="localhost", port=8012)
+    # uvicorn.run(app, host="localhost", port=8012)
+    uvicorn.run(app, host="0.0.0.0", port=8012)
