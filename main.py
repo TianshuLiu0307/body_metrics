@@ -121,7 +121,7 @@ def get_db():
 def hello():
     return "hello"
 
-@app.get("/verify/{google_email}")
+@app.get("/user_email/{google_email}")
 def redirect_user(google_email:str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == google_email).first()
     if not user:
@@ -132,6 +132,41 @@ def redirect_user(google_email:str, db: Session = Depends(get_db)):
     current_user_id = user.user_id
     print("current id: ", current_user_id)
     return RedirectResponse(url=f"/user")
+
+@app.get("/user_email/{google_email}/metrics")
+def get_user_metrics(google_email:str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == google_email).first()
+    if not user:
+        # raise HTTPException(status_code=404, detail="User not found")
+        add_new_user(google_email, db)
+        user = db.query(User).filter(User.email == google_email).first()
+
+    global current_user_id
+    current_user_id = user.user_id
+
+    body_metrics_records = (
+        db.query(BodyMetrics)
+        .filter(BodyMetrics.user_id == current_user_id)
+        .options(joinedload(BodyMetrics.metric))
+        .all()
+    )
+
+    if not body_metrics_records:
+        raise HTTPException(status_code=404, detail="No body metrics records found for this user")
+
+    result = []
+    for record in body_metrics_records:
+        result.append({
+            "timestamp": record.timestamp,
+            "metric_index": record.metric_index,
+            "value": record.value,
+            "metric_name": record.metric.metric_name,  # Access metric_name through the relationship
+            "metric_unit": record.metric.metric_unit,  # Access metric_unit through the relationship
+        })
+
+    return result
+
+
 
 @app.post("/create_user")
 def add_new_user(google_email:str, db: Session = Depends(get_db)):
@@ -314,9 +349,7 @@ def delete_body_metric(
 
 
 @app.get("/user")
-def user(
-        # user_id: int,
-        request: Request, db: Session = Depends(get_db)):
+def user(request: Request, db: Session = Depends(get_db)):
     # current_user_id = 1
     user = db.query(User).filter(User.user_id == current_user_id).first()
 
