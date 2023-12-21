@@ -475,5 +475,5 @@ def update_user1(user_data: UserUpdateModel, db: Session = Depends(get_db)):
     return user
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8012)
-    #uvicorn.run(app, host="0.0.0.0", port=8012)
+    # uvicorn.run(app, host="localhost", port=8012)
+    uvicorn.run(app, host="0.0.0.0", port=8012)
