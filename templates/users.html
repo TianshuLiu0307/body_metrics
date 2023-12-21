@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <a href="/user" class="btn btn-secondary mb-3">Back</a>
+        <h2>User Profile</h2>
+
+        <table class="table">
+            <tr>
+                <th>User ID:</th>
+                <td>{{ user.user_id }}</td>
+            </tr>
+            <tr>
+                <th>User Name:</th>
+                <td>{{ user.user_name }}</td>
+            </tr>
+            <tr>
+                <th>Date of Birth:</th>
+                <td>{{ user.dob }}</td>
+            </tr>
+            <tr>
+                <th>Gender:</th>
+                <td>{{ user.gender }}</td>
+            </tr>
+            <tr>
+                <th>Race:</th>
+                <td>{{ user.race }}</td>
+            </tr>
+            <tr>
+                <th>Email:</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th>Phone Number:</th>
+                <td>{{ user.phone_number }}</td>
+            </tr>
+        </table>
+
+
+        <h3>Body Metrics History</h3>
+        <table class="table" id="bodyMetricsTable">
+            <thead>
+                <tr>
+                    <th>Metric Name</th>
+                    <th>Time</th>
+                    <th>Value</th>
+                    <th>Metric Unit</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in body_metrics %}
+                <tr>
+                    <td>{{ record.metric_name }}</td>
+                    <td>{{ record.timestamp }}</td>
+                    <td>{{ record.value }}</td>
+                    <td>{{ record.metric_unit }}</td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#bodyMetricsTable').DataTable({
+            "paging": false,
+            "ordering": true,
+            "searching": false,
+            "order": [[1, 'desc']]
+        });
+
+        const editButton = document.getElementById("editButton");
+        const editForm = document.getElementById("editForm");
+        const confirmButton = document.getElementById("confirmButton");
+
+        function isValidEmail(email) {
+            const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            return regex.test(email);
+        }
+
+        function checkRequiredFieldsAndEmail() {
+            const userName = document.getElementById('new_user_name').value.trim();
+            const userEmail = document.getElementById('new_email').value.trim();
+            confirmButton.disabled = !(userName && isValidEmail(userEmail));
+        }
+
+        editButton.addEventListener("click", () => {
+            editForm.style.display = "block";
+            checkRequiredFieldsAndEmail();
+        });
+
+        const formFields = editForm.querySelectorAll("input");
+        formFields.forEach((field) => {
+            field.addEventListener("input", checkRequiredFieldsAndEmail);
+        });
+
+        confirmButton.addEventListener("click", () => {
+            if (!confirmButton.disabled) {
+                editForm.submit();
+            }
+        });
+    });
+</script>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
