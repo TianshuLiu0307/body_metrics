@@ -166,7 +166,15 @@ def get_user_metrics(google_email:str, db: Session = Depends(get_db)):
 
     return result
 
+@app.get("/user_email/{google_email}/user")
+def get_user_metrics(google_email:str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == google_email).first()
+    if not user:
+        # raise HTTPException(status_code=404, detail="User not found")
+        add_new_user(google_email, db)
+        user = db.query(User).filter(User.email == google_email).first()
 
+    return user
 
 @app.post("/create_user")
 def add_new_user(google_email:str, db: Session = Depends(get_db)):
@@ -467,5 +475,5 @@ def update_user1(user_data: UserUpdateModel, db: Session = Depends(get_db)):
     return user
 
 if __name__ == "__main__":
-    # uvicorn.run(app, host="localhost", port=8012)
-    uvicorn.run(app, host="0.0.0.0", port=8012)
+    uvicorn.run(app, host="localhost", port=8012)
+    #uvicorn.run(app, host="0.0.0.0", port=8012)
