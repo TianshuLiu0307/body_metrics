@@ -47,7 +47,7 @@
 
         <!-- Editable Profile Form -->
 
-        <form action="/user/request_edit" method="POST" style="display: none;" id="editForm">
+        <form action="/users/{{ user.user_id }}/request_edit" method="POST" style="display: none;" id="editForm">
             <!-- User Name Field -->
             <div class="form-group">
                 <label for="new_user_name">User Name:</label>
@@ -96,7 +96,7 @@
 
 
         <h3>Add New Metric</h3>
-        <form method="POST" action="/user/add_metric/">
+        <form method="POST" action="/users/{{ user.user_id }}/add_metric/">
             <div class="form-group">
                 <label for="metric_index">Metric Name:</label>
                 <select class="form-control" id="metricSelect" name="metric_index">
@@ -133,7 +133,7 @@
                     <td>{{ record.value }}</td>
                     <td>{{ record.metric_unit }}</td>
                     <td>
-                        <form action="/user/delete" method="POST">
+                        <form action="/users/{{ user.user_id }}/delete" method="POST">
                             <input type="hidden" id="delete_timestamp" name="delete_timestamp" value="{{ record.timestamp }}">
                             <input type="hidden" id="delete_metric_index" name="delete_metric_index" value="{{ record.metric_index }}">
                             <button type="submit" class="btn btn-danger">Delete</button>

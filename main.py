@@ -128,10 +128,11 @@ def redirect_user(google_email:str, db: Session = Depends(get_db)):
         # raise HTTPException(status_code=404, detail="User not found")
         add_new_user(google_email, db)
         user = db.query(User).filter(User.email == google_email).first()
-    global current_user_id
-    current_user_id = user.user_id
-    print("current id: ", current_user_id)
-    return RedirectResponse(url=f"/user")
+    # global current_user_id
+    # current_user_id = user.user_id
+    # print("current id: ", current_user_id)
+    print("got user: ", user.user_id)
+    return RedirectResponse(url=f"/users/{user.user_id}")
 
 @app.get("/user_email/{google_email}/metrics")
 def get_user_metrics(google_email:str, db: Session = Depends(get_db)):
@@ -235,9 +236,9 @@ def add_new_user(google_email:str, db: Session = Depends(get_db)):
 
 
 # @app.post("/users/{user_id}/edit")
-@app.post("/user/request_edit")
+@app.post("/users/{user_id}/request_edit")
 def get_update_user(
-        # user_id:int,
+    user_id:int,
     new_user_name: str = Form(...),
     new_email: EmailStr = Form(...),
     new_dob: date = Form(None),
@@ -261,9 +262,9 @@ def get_update_user(
         phone_number = new_phone_number
     )
     update_user(new_user, db)
-    return RedirectResponse(url=f"/user", status_code=303)
+    return RedirectResponse(url=f"/users/{user_id}", status_code=303)
 
-@app.put("/user/edit", response_model=UserUpdateModel)
+@app.put("/users/{user_id}/edit", response_model=UserUpdateModel)
 def update_user(user_data: UserUpdateModel, db: Session = Depends(get_db)):
     # user_id = user_data.user_id
     user = db.query(User).filter(User.user_id == user_data.user_id).first()
@@ -274,11 +275,10 @@ def update_user(user_data: UserUpdateModel, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
     print("updated!")
-    return user
+    return "updated"
 
-@app.post("/user/add_metric")
-def add_body_metric(
-        # user_id: int,
+@app.post("/users/{user_id}/add_metric")
+def add_body_metric(user_id: int,
                     metric_index: int = Form(...),
                     value: float = Form(...),
                     db: Session = Depends(get_db)):
@@ -292,15 +292,15 @@ def add_body_metric(
     db.add(new_metric)
     db.commit()
     db.refresh(new_metric)
-    return RedirectResponse(url=f"/user", status_code=303)
+    return RedirectResponse(url=f"/users/{user_id}", status_code=303)
 
-@app.get("/user/metrics")
+@app.get("/users/{user_id}/metrics")
 def get_body_metrics_for_user(
-        # user_id: int,
+        user_id: int,
         db: Session = Depends(get_db)):
     body_metrics_records = (
         db.query(BodyMetrics)
-        .filter(BodyMetrics.user_id == current_user_id)
+        .filter(BodyMetrics.user_id == user_id)
         .options(joinedload(BodyMetrics.metric))
         .all()
     )
@@ -321,26 +321,24 @@ def get_body_metrics_for_user(
 
     return result
 
-@app.post("/user/delete")
-def get_delete_metric(
-        # user_id: int,
+@app.post("/users/{user_id}/delete")
+def get_delete_metric(user_id: int,
                       delete_timestamp: str = Form(...),
                       delete_metric_index: str = Form(...),
                       db: Session = Depends(get_db)):
 
-    delete_body_metric(delete_timestamp, delete_metric_index, db)
-    return RedirectResponse(url=f"/user", status_code=303)
+    delete_body_metric(user_id, delete_timestamp, delete_metric_index, db)
+    return RedirectResponse(url=f"/users/{user_id}", status_code=303)
 
 
-@app.delete("/user/metrics/{timestamp}/{metric_index}")
-def delete_body_metric(
-        # user_id: int,
+@app.delete("/users/{user_id}/delete_metric")
+def delete_body_metric(user_id: int,
         timestamp: str, metric_index: str, db: Session = Depends(get_db)):
 
     timestamp = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
 
     metric_record = db.query(BodyMetrics).filter(
-        BodyMetrics.user_id == current_user_id,
+        BodyMetrics.user_id == user_id,
         BodyMetrics.timestamp == timestamp,
         BodyMetrics.metric_index == metric_index
     ).first()
@@ -355,10 +353,16 @@ def delete_body_metric(
     return {"detail": "Body metric record deleted successfully"}
 
 
+@app.get("/users/{user_id}")
+def get_user_id(user_id:int):
+    global current_user_id
+    current_user_id = user_id
+    return RedirectResponse(url=f"/user", status_code=303)
+
 
 @app.get("/user")
 def user(request: Request, db: Session = Depends(get_db)):
-    # current_user_id = 1
+
     user = db.query(User).filter(User.user_id == current_user_id).first()
 
     # if user is None:
@@ -475,5 +479,5 @@ def update_user1(user_data: UserUpdateModel, db: Session = Depends(get_db)):
     return user
 
 if __name__ == "__main__":
-    # uvicorn.run(app, host="localhost", port=8012)
-    uvicorn.run(app, host="0.0.0.0", port=8012)
+    uvicorn.run(app, host="localhost", port=8012)
+    # uvicorn.run(app, host="0.0.0.0", port=8012)
